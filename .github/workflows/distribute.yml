@@ -1,0 +1,70 @@
+name: Deploy to Dist
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Config and Fetch
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git fetch origin main
+          git fetch origin dist
+
+      - name: Checkout Main
+        run: git checkout main
+
+      - name: Setup NodeJS 💎
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install TypeScript and Terser
+        run: npm install -g typescript terser
+
+      - name: Compile TypeScript
+        run: tsc
+
+      - name: Minify with Terser
+        run: |
+          for file in buff/*.js; do
+            base_name=$(basename "${file%.js}")
+            output_file="distribution/${base_name}.min.js"
+            terser "$file" -c -m -o "$output_file"
+          done
+
+      - name: Check for empty
+        run: |
+          if [ -z "$(ls -1 distribution/*.js 2>/dev/null)" ]; then
+            echo "::error title=Dist is empty::No JavaScript file was found in distribution/"
+            exit 1
+          fi
+
+      - name: Copy locally
+        run: |
+          mkdir temp-folder
+          cp -r distribution/* temp-folder/
+
+      - name: Paste to Dist
+        run: |
+          git checkout dist
+          git rm -rf . || true
+          cp -r temp-folder/* .
+
+      - name: Commit and Push
+        run: |
+          git add ./*.js
+          git commit -m "Deployed from ${{ github.sha }}" || echo "No changes to commit"
+          git push origin dist
