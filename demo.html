@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SVG Plotter Example</title>
+</head>
+<body>
+    <div id="chart-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/gh/MUmarShahbaz/SVG-Plotter@dist/svg_plotter.min.js"></script>
+    <script>
+        // Define your data - Complex multi-series time-based performance metrics
+        const data = {
+            title: "System Performance Metrics Over Time",
+            grid: {
+                x: {
+                    title: "Time (Minutes)",
+                    type: "time",
+                    ticks: {
+                        raw: [0, 300000, 600000, 900000, 1200000, 1500000, 1800000, 2100000, 2400000, 2700000, 3000000], // 5-minute intervals in milliseconds
+                        formatted: ["0:00", "5:00", "10:00", "15:00", "20:00", "25:00", "30:00", "35:00", "40:00", "45:00", "50:00"],
+                        min: 0,
+                        max: 3000000,
+                        range: 3000000
+                    },
+                    time_format: "m:s"
+                },
+                y: {
+                    title: "Performance Metrics",
+                    type: "linear",
+                    ticks: {
+                        min: 0,
+                        max: 200,
+                        range: 200
+                    },
+                    base: null
+                }
+            },
+            series: [
+                {
+                    label: "CPU Usage (%)",
+                    color: "#e74c3c",
+                    data: [25, 45, 78, 92, 85, 67, 55, 48, 52, 39, 28]
+                },
+                {
+                    label: "Memory Usage (%)",
+                    color: "#3498db",
+                    data: [35, 42, 48, 55, 62, 58, 53, 49, 46, 44, 41]
+                },
+                {
+                    label: "Network I/O (MB/s)",
+                    color: "#2ecc71",
+                    data: [12, 18, 25, 35, 42, 38, 28, 22, 19, 15, 13]
+                },
+                {
+                    label: "Disk Usage (%)",
+                    color: "#f39c12",
+                    data: [65, 68, 72, 75, 78, 82, 79, 76, 73, 70, 67]
+                },
+                {
+                    label: "Response Time (ms)",
+                    color: "#9b59b6",
+                    data: [120, 135, 158, 185, 172, 145, 125, 118, 112, 105, 98]
+                }
+            ]
+        };
+
+        // Configure the chart appearance - Enhanced styling with correct dimensions
+        const config = {
+            bg: "#f8f9fa",
+            dimensions: {
+                width: { image: 1200, plot: 1000 },  // image = plot + left + right = 1000 + 120 + 80 = 1200
+                height: { image: 800, plot: 520 },   // image = plot + top + bottom = 520 + 80 + 200 = 800
+                margins: { left: 120, right: 80, top: 80, bottom: 200 }
+            },
+            grid: {
+                gaps: {
+                    x: { gap_by: "val", val: 300000 }, // 5-minute intervals
+                    y: { gap_by: "val", val: 20 }
+                },
+                lines: {
+                    axes: { color: "#2c3e50", width: 3 },
+                    main: { color: "#ecf0f1", width: 1 },
+                    font: { color: "#34495e", size: 14 }
+                }
+            },
+            series: {
+                width: 3,
+                alpha: 0.9,
+                point: { radius: 5, alpha: 0.8 },
+                fill: { alpha: 0.15 }
+            }
+        };
+
+        // Create the chart
+        const chart = SVG_GENERATOR(config, data, "my-chart");
+
+        // Initialize and append to DOM
+        const container = document.getElementById('chart-container');
+        const svgElement = chart.init(container);
+        chart.updateGrid();
+        chart.updateData();
+    </script>
+</body>
+</html>
