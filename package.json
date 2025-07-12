@@ -1,0 +1,22 @@
+{
+  "name": "svg-plotter",
+  "version": "1.0.0",
+  "description": "SVG Chart Maker made with TypeScript and compiled to Vanilla JS",
+  "main": "index.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MUmarShahbaz/SVG-Plotter.git"
+  },
+  "keywords": [
+    "svg",
+    "vector-graphics",
+    "chart",
+    "graphs"
+  ],
+  "author": "Muhammad Umar Shahbaz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MUmarShahbaz/SVG-Plotter/issues"
+  },
+  "homepage": "https://github.com/MUmarShahbaz/SVG-Plotter#readme"
+}
