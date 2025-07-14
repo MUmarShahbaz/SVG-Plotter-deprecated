@@ -1,0 +1,794 @@
+<!--This benchmark is AI generated, I don't have experience with benchmarking-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SVG Plotter Performance Benchmark Suite</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 1rem;
+      background: #f8f9fa;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    label {
+      font-weight: 600;
+      color: #555;
+    }
+    input, select, button {
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    button:disabled {
+      background: #6c757d;
+      cursor: not-allowed;
+    }
+    #results {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .results-panel {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .results-panel h3 {
+      margin-top: 0;
+      color: #333;
+      border-bottom: 2px solid #007bff;
+      padding-bottom: 0.5rem;
+    }
+    .benchmark-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    .benchmark-table th,
+    .benchmark-table td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    .benchmark-table th {
+      background: #f8f9fa;
+      font-weight: 600;
+    }
+    .benchmark-table tr:hover {
+      background: #f8f9fa;
+    }
+    .performance-metric {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #eee;
+    }
+    .performance-metric:last-child {
+      border-bottom: none;
+    }
+    .metric-value {
+      font-weight: 600;
+      color: #007bff;
+    }
+    .warning {
+      color: #dc3545;
+    }
+    .good {
+      color: #28a745;
+    }
+    .svg-container {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-top: 2rem;
+      text-align: center;
+    }
+    svg {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #e9ecef;
+      border-radius: 3px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #007bff;
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+    .status {
+      text-align: center;
+      padding: 1rem;
+      font-weight: 600;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>SVG Plotter Performance Benchmark Suite</h1>
+    
+    <div class="controls">
+      <div class="control-group">
+        <label for="dataPoints">Data Points:</label>
+        <select id="dataPoints">
+          <option value="100">100</option>
+          <option value="500">500</option>
+          <option value="1000" selected>1,000</option>
+          <option value="5000">5,000</option>
+          <option value="10000">10,000</option>
+          <option value="50000">50,000</option>
+        </select>
+      </div>
+      
+      <div class="control-group">
+        <label for="seriesCount">Series Count:</label>
+        <select id="seriesCount">
+          <option value="1" selected>1</option>
+          <option value="3">3</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+        </select>
+      </div>
+      
+      <div class="control-group">
+        <label for="chartType">Chart Type:</label>
+        <select id="chartType">
+          <option value="line" selected>Line Only</option>
+          <option value="line_points">Line + Points</option>
+          <option value="line_fill">Line + Fill</option>
+          <option value="full">Line + Points + Fill</option>
+        </select>
+      </div>
+      
+      <div class="control-group">
+        <label for="iterations">Test Iterations:</label>
+        <select id="iterations">
+          <option value="1">1</option>
+          <option value="5" selected>5</option>
+          <option value="10">10</option>
+          <option value="25">25</option>
+        </select>
+      </div>
+      
+      <button onclick="runBenchmark()" id="runBtn">Run Benchmark</button>
+      <button onclick="runStressTest()" id="stressBtn">Stress Test</button>
+      <button onclick="clearResults()" id="clearBtn">Clear Results</button>
+    </div>
+
+    <div class="progress-bar" id="progressBar" style="display: none;">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    
+    <div class="status" id="status"></div>
+
+    <div id="results">
+      <div class="results-panel">
+        <h3>Performance Metrics</h3>
+        <div id="performanceMetrics">
+          <div class="performance-metric">
+            <span>Status:</span>
+            <span class="metric-value" id="testStatus">Ready</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="results-panel">
+        <h3>Detailed Timings</h3>
+        <table class="benchmark-table" id="timingTable">
+          <thead>
+            <tr>
+              <th>Operation</th>
+              <th>Time (ms)</th>
+              <th>Performance</th>
+            </tr>
+          </thead>
+          <tbody id="timingTableBody">
+            <tr><td colspan="3">No data yet</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="svg-container" id="svg-container">
+      <h3>Generated Chart</h3>
+      <p>Chart will appear here after running benchmark</p>
+    </div>
+  </div>
+
+  <script>
+    // Performance tracking
+    let benchmarkHistory = [];
+    let isRunning = false;
+
+    // Generate test data of varying complexity
+    function generateTestData(pointCount, seriesCount, chartType) {
+      const baseConfig = {
+        dimensions: {
+          width: { image: 800, plot: 700 },
+          height: { image: 500, plot: 400 },
+          margins: { top: 50, left: 60, right: 20, bottom: 50 }
+        },
+        bg: "#ffffff",
+        grid: {
+          gaps: {
+            x: { gap_by: "px", val: "50" },
+            y: { gap_by: "val", val: 10 }
+          },
+          lines: {
+            main: { color: "#e0e0e0", width: 1 },
+            axes: { color: "#333333", width: 2 },
+            font: { size: 12, color: "#666666" }
+          }
+        },
+        series: {
+          width: 2,
+          alpha: 1,
+          point: (chartType.includes('points') || chartType === 'full') ? { radius: 3, alpha: 0.8 } : null,
+          fill: (chartType.includes('fill') || chartType === 'full') ? { alpha: 0.3 } : null
+        }
+      };
+
+      const xValues = Array.from({ length: pointCount }, (_, i) => i);
+      const xRange = pointCount - 1;
+      
+      const data = {
+        title: `Test Chart (${pointCount} points, ${seriesCount} series)`,
+        grid: {
+          x: {
+            title: "Time",
+            type: "linear",
+            ticks: {
+              min: 0,
+              max: xRange,
+              range: xRange,
+              raw: xValues,
+              formatted: xValues.map(x => x.toString())
+            },
+            time_format: null
+          },
+          y: {
+            title: "Value",
+            type: "linear",
+            ticks: {
+              min: -100,
+              max: 100,
+              range: 200
+            },
+            base: null
+          }
+        },
+        series: []
+      };
+
+      // Generate multiple series with different patterns
+      const colors = ["#ff6b6b", "#4ecdc4", "#45b7d1", "#f9ca24", "#f0932b", "#eb4d4b", "#6c5ce7", "#a29bfe", "#fd79a8", "#e17055"];
+      
+      for (let s = 0; s < seriesCount; s++) {
+        const seriesData = [];
+        const frequency = 0.02 + (s * 0.01);
+        const amplitude = 50 + (s * 10);
+        const phase = s * Math.PI / 4;
+        
+        for (let i = 0; i < pointCount; i++) {
+          let value;
+          switch (s % 4) {
+            case 0: // Sine wave
+              value = Math.sin(i * frequency + phase) * amplitude;
+              break;
+            case 1: // Cosine with noise
+              value = Math.cos(i * frequency + phase) * amplitude + (Math.random() - 0.5) * 20;
+              break;
+            case 2: // Sawtooth
+              value = ((i * frequency) % 1) * amplitude * 2 - amplitude;
+              break;
+            case 3: // Square wave
+              value = Math.sin(i * frequency + phase) > 0 ? amplitude : -amplitude;
+              break;
+          }
+          seriesData.push(value);
+        }
+
+        data.series.push({
+          label: `Series ${s + 1}`,
+          color: colors[s % colors.length],
+          data: seriesData
+        });
+      }
+
+      return { config: baseConfig, data };
+    }
+
+    // Memory usage estimation
+    function estimateMemoryUsage(pointCount, seriesCount) {
+      // Rough estimation of memory usage
+      const dataPoints = pointCount * seriesCount;
+      const svgElements = dataPoints * 2; // lines + potential points
+      const bytesPerElement = 200; // estimated DOM element size
+      return svgElements * bytesPerElement;
+    }
+
+    // Performance evaluation
+    function evaluatePerformance(time, operation, complexity) {
+      const thresholds = {
+        init: { good: 50, warning: 200 },
+        grid: { good: 100, warning: 500 },
+        data: { good: 200, warning: 1000 },
+        total: { good: 300, warning: 1500 }
+      };
+      
+      const threshold = thresholds[operation] || thresholds.total;
+      
+      if (time <= threshold.good) return 'good';
+      if (time <= threshold.warning) return 'warning';
+      return 'critical';
+    }
+
+    // Update progress bar
+    function updateProgress(percent) {
+      const progressFill = document.getElementById('progressFill');
+      const progressBar = document.getElementById('progressBar');
+      progressBar.style.display = 'block';
+      progressFill.style.width = percent + '%';
+      
+      if (percent >= 100) {
+        setTimeout(() => {
+          progressBar.style.display = 'none';
+        }, 1000);
+      }
+    }
+
+    // Update status
+    function updateStatus(message) {
+      document.getElementById('status').textContent = message;
+    }
+
+    // Main benchmark function
+    async function runBenchmark() {
+      if (isRunning) return;
+      
+      // Check if SVG_GENERATOR is available
+      if (typeof SVG_GENERATOR !== 'function') {
+        updateStatus('Error: SVG_GENERATOR not loaded. Please check the CDN connection.');
+        return;
+      }
+      
+      isRunning = true;
+
+      const runBtn = document.getElementById('runBtn');
+      const stressBtn = document.getElementById('stressBtn');
+      runBtn.disabled = true;
+      stressBtn.disabled = true;
+
+      try {
+        const pointCount = parseInt(document.getElementById('dataPoints').value);
+        const seriesCount = parseInt(document.getElementById('seriesCount').value);
+        const chartType = document.getElementById('chartType').value;
+        const iterations = parseInt(document.getElementById('iterations').value);
+
+        updateStatus(`Running benchmark: ${pointCount} points, ${seriesCount} series, ${iterations} iterations`);
+        updateProgress(0);
+
+        const { config, data } = generateTestData(pointCount, seriesCount, chartType);
+        const container = document.getElementById("svg-container");
+        
+        // Clear previous results
+        container.innerHTML = "<h3>Generated Chart</h3>";
+
+        // Memory estimation
+        const estimatedMemory = estimateMemoryUsage(pointCount, seriesCount);
+        
+        let totalTimes = { init: 0, grid: 0, data: 0, total: 0 };
+        let results = [];
+
+        // Run multiple iterations
+        for (let iter = 0; iter < iterations; iter++) {
+          updateStatus(`Running iteration ${iter + 1}/${iterations}`);
+          updateProgress((iter / iterations) * 80);
+
+          // Create fresh SVG instance for each iteration
+          const svgGen = SVG_GENERATOR(config, data, `test_svg_${iter}`);
+          
+          // Clear container for this iteration
+          if (iter < iterations - 1) {
+            const tempContainer = document.createElement('div');
+            document.body.appendChild(tempContainer);
+            
+            try {
+              const t0 = performance.now();
+              svgGen.init(tempContainer);
+              const t1 = performance.now();
+              svgGen.updateGrid();
+              const t2 = performance.now();
+              svgGen.updateData();
+              const t3 = performance.now();
+              
+              const times = {
+                init: t1 - t0,
+                grid: t2 - t1,
+                data: t3 - t2,
+                total: t3 - t0
+              };
+              
+              results.push(times);
+              Object.keys(totalTimes).forEach(key => {
+                totalTimes[key] += times[key];
+              });
+            } catch (error) {
+              console.error(`Error in iteration ${iter + 1}:`, error);
+              throw new Error(`SVG generation failed in iteration ${iter + 1}: ${error.message}`);
+            } finally {
+              // Clean up temp container
+              if (document.body.contains(tempContainer)) {
+                document.body.removeChild(tempContainer);
+              }
+            }
+          } else {
+            // Last iteration - show the result
+            try {
+              const t0 = performance.now();
+              svgGen.init(container);
+              const t1 = performance.now();
+              svgGen.updateGrid();
+              const t2 = performance.now();
+              svgGen.updateData();
+              const t3 = performance.now();
+              
+              const times = {
+                init: t1 - t0,
+                grid: t2 - t1,
+                data: t3 - t2,
+                total: t3 - t0
+              };
+              
+              results.push(times);
+              Object.keys(totalTimes).forEach(key => {
+                totalTimes[key] += times[key];
+              });
+            } catch (error) {
+              console.error(`Error in final iteration:`, error);
+              throw new Error(`SVG generation failed in final iteration: ${error.message}`);
+            }
+          }
+        }
+
+        updateProgress(90);
+
+        // Calculate averages
+        const avgTimes = {};
+        Object.keys(totalTimes).forEach(key => {
+          avgTimes[key] = totalTimes[key] / iterations;
+        });
+
+        // Calculate statistics
+        const stats = {};
+        Object.keys(totalTimes).forEach(key => {
+          const values = results.map(r => r[key]);
+          stats[key] = {
+            avg: avgTimes[key],
+            min: Math.min(...values),
+            max: Math.max(...values),
+            std: Math.sqrt(values.reduce((sum, val) => sum + Math.pow(val - avgTimes[key], 2), 0) / values.length)
+          };
+        });
+
+        // Store in history
+        benchmarkHistory.push({
+          timestamp: new Date(),
+          pointCount,
+          seriesCount,
+          chartType,
+          iterations,
+          stats,
+          estimatedMemory
+        });
+
+        updateProgress(100);
+        updateStatus('Benchmark completed successfully');
+
+        // Update UI
+        displayResults(stats, pointCount, seriesCount, estimatedMemory);
+
+      } catch (error) {
+        updateStatus(`Error: ${error.message}`);
+        console.error('Benchmark error:', error);
+      } finally {
+        isRunning = false;
+        runBtn.disabled = false;
+        stressBtn.disabled = false;
+      }
+    }
+
+    // Display results in UI
+    function displayResults(stats, pointCount, seriesCount, estimatedMemory) {
+      // Update performance metrics
+      const metricsDiv = document.getElementById('performanceMetrics');
+      metricsDiv.innerHTML = `
+        <div class="performance-metric">
+          <span>Status:</span>
+          <span class="metric-value good">Completed</span>
+        </div>
+        <div class="performance-metric">
+          <span>Data Points:</span>
+          <span class="metric-value">${pointCount.toLocaleString()}</span>
+        </div>
+        <div class="performance-metric">
+          <span>Series Count:</span>
+          <span class="metric-value">${seriesCount}</span>
+        </div>
+        <div class="performance-metric">
+          <span>Total Elements:</span>
+          <span class="metric-value">${(pointCount * seriesCount).toLocaleString()}</span>
+        </div>
+        <div class="performance-metric">
+          <span>Est. Memory:</span>
+          <span class="metric-value">${(estimatedMemory / 1024 / 1024).toFixed(2)} MB</span>
+        </div>
+        <div class="performance-metric">
+          <span>Performance Score:</span>
+          <span class="metric-value ${evaluatePerformance(stats.total.avg, 'total')}">${getPerformanceScore(stats.total.avg)}</span>
+        </div>
+      `;
+
+      // Update timing table
+      const tableBody = document.getElementById('timingTableBody');
+      tableBody.innerHTML = `
+        <tr>
+          <td>Initialization</td>
+          <td>${stats.init.avg.toFixed(2)} ms (±${stats.init.std.toFixed(2)})</td>
+          <td><span class="${evaluatePerformance(stats.init.avg, 'init')}">${getPerformanceText(stats.init.avg, 'init')}</span></td>
+        </tr>
+        <tr>
+          <td>Grid Generation</td>
+          <td>${stats.grid.avg.toFixed(2)} ms (±${stats.grid.std.toFixed(2)})</td>
+          <td><span class="${evaluatePerformance(stats.grid.avg, 'grid')}">${getPerformanceText(stats.grid.avg, 'grid')}</span></td>
+        </tr>
+        <tr>
+          <td>Data Rendering</td>
+          <td>${stats.data.avg.toFixed(2)} ms (±${stats.data.std.toFixed(2)})</td>
+          <td><span class="${evaluatePerformance(stats.data.avg, 'data')}">${getPerformanceText(stats.data.avg, 'data')}</span></td>
+        </tr>
+        <tr>
+          <td><strong>Total Time</strong></td>
+          <td><strong>${stats.total.avg.toFixed(2)} ms (±${stats.total.std.toFixed(2)})</strong></td>
+          <td><span class="${evaluatePerformance(stats.total.avg, 'total')}"><strong>${getPerformanceText(stats.total.avg, 'total')}</strong></span></td>
+        </tr>
+        <tr>
+          <td>Throughput</td>
+          <td>${(pointCount * seriesCount / stats.total.avg * 1000).toFixed(0)} elements/sec</td>
+          <td>-</td>
+        </tr>
+      `;
+    }
+
+    function getPerformanceScore(totalTime) {
+      if (totalTime <= 300) return 'Excellent';
+      if (totalTime <= 1000) return 'Good';
+      if (totalTime <= 2000) return 'Fair';
+      return 'Poor';
+    }
+
+    function getPerformanceText(time, operation) {
+      const performance = evaluatePerformance(time, operation);
+      switch (performance) {
+        case 'good': return 'Excellent';
+        case 'warning': return 'Acceptable';
+        case 'critical': return 'Slow';
+        default: return 'Unknown';
+      }
+    }
+
+    // Stress test with increasing complexity
+    async function runStressTest() {
+      if (isRunning) return;
+      
+      // Check if SVG_GENERATOR is available
+      if (typeof SVG_GENERATOR !== 'function') {
+        updateStatus('Error: SVG_GENERATOR not loaded. Please check the CDN connection.');
+        return;
+      }
+      
+      isRunning = true;
+
+      const runBtn = document.getElementById('runBtn');
+      const stressBtn = document.getElementById('stressBtn');
+      runBtn.disabled = true;
+      stressBtn.disabled = true;
+
+      try {
+        updateStatus('Running stress test...');
+        
+        const testCases = [
+          { points: 100, series: 1 },
+          { points: 500, series: 1 },
+          { points: 1000, series: 1 },
+          { points: 1000, series: 5 },
+          { points: 5000, series: 1 },
+          { points: 2000, series: 5 },
+          { points: 10000, series: 1 }
+        ];
+
+        let results = [];
+        
+        for (let i = 0; i < testCases.length; i++) {
+          const testCase = testCases[i];
+          updateStatus(`Stress test ${i + 1}/${testCases.length}: ${testCase.points} points, ${testCase.series} series`);
+          updateProgress((i / testCases.length) * 100);
+
+          const { config, data } = generateTestData(testCase.points, testCase.series, 'line');
+          const svgGen = SVG_GENERATOR(config, data, `stress_test_${i}`);
+          
+          const tempContainer = document.createElement('div');
+          document.body.appendChild(tempContainer);
+          
+          try {
+            const t0 = performance.now();
+            svgGen.init(tempContainer);
+            svgGen.updateGrid();
+            svgGen.updateData();
+            const t1 = performance.now();
+            
+            results.push({
+              ...testCase,
+              time: t1 - t0,
+              throughput: (t1 - t0) > 0 ? (testCase.points * testCase.series) / (t1 - t0) * 1000 : 0
+            });
+          } catch (error) {
+            console.error(`Error in stress test case ${i + 1}:`, error);
+            results.push({
+              ...testCase,
+              time: -1,
+              throughput: 0,
+              error: error.message
+            });
+          } finally {
+            if (document.body.contains(tempContainer)) {
+              document.body.removeChild(tempContainer);
+            }
+          }
+        }
+
+        updateProgress(100);
+        updateStatus('Stress test completed');
+        
+        // Display stress test results
+        displayStressTestResults(results);
+
+      } catch (error) {
+        updateStatus(`Stress test error: ${error.message}`);
+        console.error('Stress test error:', error);
+      } finally {
+        isRunning = false;
+        runBtn.disabled = false;
+        stressBtn.disabled = false;
+      }
+    }
+
+    function displayStressTestResults(results) {
+      const tableBody = document.getElementById('timingTableBody');
+      tableBody.innerHTML = '<tr><th colspan="3">Stress Test Results</th></tr>' +
+        results.map(result => `
+          <tr>
+            <td>${result.points} pts × ${result.series} series</td>
+            <td>${result.time.toFixed(2)} ms</td>
+            <td>${result.throughput.toFixed(0)} elements/sec</td>
+          </tr>
+        `).join('');
+
+      // Filter out failed tests for averages
+      const successfulResults = results.filter(r => r.time >= 0);
+      if (successfulResults.length === 0) {
+        updateStatus('All stress tests failed');
+        return;
+      }
+
+      // Update metrics
+      const avgTime = successfulResults.reduce((sum, r) => sum + r.time, 0) / successfulResults.length;
+      const maxTime = Math.max(...successfulResults.map(r => r.time));
+      const avgThroughput = successfulResults.reduce((sum, r) => sum + r.throughput, 0) / successfulResults.length;
+
+      const metricsDiv = document.getElementById('performanceMetrics');
+      metricsDiv.innerHTML = `
+        <div class="performance-metric">
+          <span>Status:</span>
+          <span class="metric-value good">Stress Test Complete</span>
+        </div>
+        <div class="performance-metric">
+          <span>Test Cases:</span>
+          <span class="metric-value">${results.length} (${successfulResults.length} successful)</span>
+        </div>
+        <div class="performance-metric">
+          <span>Average Time:</span>
+          <span class="metric-value">${avgTime.toFixed(2)} ms</span>
+        </div>
+        <div class="performance-metric">
+          <span>Max Time:</span>
+          <span class="metric-value">${maxTime.toFixed(2)} ms</span>
+        </div>
+        <div class="performance-metric">
+          <span>Avg Throughput:</span>
+          <span class="metric-value">${avgThroughput.toFixed(0)} elements/sec</span>
+        </div>
+      `;
+    }
+
+    function clearResults() {
+      document.getElementById('svg-container').innerHTML = '<h3>Generated Chart</h3><p>Chart will appear here after running benchmark</p>';
+      document.getElementById('timingTableBody').innerHTML = '<tr><td colspan="3">No data yet</td></tr>';
+      document.getElementById('performanceMetrics').innerHTML = `
+        <div class="performance-metric">
+          <span>Status:</span>
+          <span class="metric-value" id="testStatus">Ready</span>
+        </div>
+      `;
+      document.getElementById('status').textContent = '';
+      document.getElementById('progressBar').style.display = 'none';
+      benchmarkHistory = [];
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      updateStatus('Ready to run benchmarks');
+    });
+  </script>
+
+  <!-- You can paste your SVG_GENERATOR function right here or link it via <script src="..."></script> -->
+  <script src="https://cdn.jsdelivr.net/gh/MUmarShahbaz/SVG-Plotter-deprecated@dist/svg_plotter.min.js"></script>
+  
+  <script>
+    // Check if SVG_GENERATOR loaded successfully
+    window.addEventListener('load', function() {
+      if (typeof SVG_GENERATOR !== 'function') {
+        updateStatus('Warning: SVG_GENERATOR failed to load from CDN. Some features may not work.');
+        console.error('SVG_GENERATOR not available. Please check the CDN link or include the library manually.');
+      }
+    });
+  </script>
+</body>
+</html>
