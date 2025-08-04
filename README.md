@@ -13,20 +13,20 @@ A lightweight, TypeScript-based library for generating dynamic SVG charts and pl
 - **Dynamic Updates**: Real-time data and grid updates without recreating the entire chart
 - **Responsive Design**: Configurable dimensions and margins for different layouts
 
-## See Demo - [HERE](https://mumarshahbaz.github.io/SVG-Plotter/demo.html)
+## See Demo - [HERE](https://mumarshahbaz.github.io/SVG-Plotter-deprecated/demo.html)
 
 ## Installation
 
 Include the minified JavaScript file directly from jsDelivr CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/MUmarShahbaz/SVG-Plotter@dist/svg_plotter.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/MUmarShahbaz/SVG-Plotter-deprecated@dist/svg_plotter.min.js"></script>
 ```
 
 Or via ES6 import in your JavaScript/TypeScript project:
 
 ```javascript
-import { SVG_GENERATOR } from 'https://cdn.jsdelivr.net/gh/MUmarShahbaz/SVG-Plotter@dist/svg_plotter.min.js';
+import { SVG_GENERATOR } from 'https://cdn.jsdelivr.net/gh/MUmarShahbaz/SVG-Plotter-deprecated@dist/svg_plotter.min.js';
 ```
 
 ## Usage
@@ -42,7 +42,7 @@ import { SVG_GENERATOR } from 'https://cdn.jsdelivr.net/gh/MUmarShahbaz/SVG-Plot
 <body>
     <div id="chart-container"></div>
 
-    <script src="https://cdn.jsdelivr.net/gh/MUmarShahbaz/SVG-Plotter@dist/svg_plotter.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/MUmarShahbaz/SVG-Plotter-deprecated@dist/svg_plotter.min.js"></script>
     <script>
         // Define your data
         const data = {
@@ -123,7 +123,7 @@ import { SVG_GENERATOR } from 'https://cdn.jsdelivr.net/gh/MUmarShahbaz/SVG-Plot
 ### ES6 Module Example
 
 ```javascript
-import { SVG_GENERATOR } from 'https://cdn.jsdelivr.net/gh/MUmarShahbaz/SVG-Plotter@dist/svg_plotter.min.js';
+import { SVG_GENERATOR } from 'https://cdn.jsdelivr.net/gh/MUmarShahbaz/SVG-Plotter-deprecated@dist/svg_plotter.min.js';
 
 // Define your data
 const data: DATA = {
